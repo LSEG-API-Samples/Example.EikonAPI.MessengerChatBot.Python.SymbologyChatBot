@@ -1,0 +1,7 @@
+.vscode/
+documents/
+internal_dev/
+chatbot_symbology/
+src/token.txt
+src/rest-token.txt
+src/__pycache__
