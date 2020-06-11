@@ -2,6 +2,6 @@
 documents/
 internal_dev/
 chatbot_symbology/
-src/token.txt
-src/rest-token.txt
+src/isin_test.py
+src/chatbot_demo_ws.py
 src/__pycache__
