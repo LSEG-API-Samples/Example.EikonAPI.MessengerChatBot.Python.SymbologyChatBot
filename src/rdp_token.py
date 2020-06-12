@@ -88,12 +88,7 @@ class RDPTokenManagement:
                                      auth=(
                                          self.app_key,
                                          self.client_secret
-                                     ),
-                                     verify='C:\\drive_d\\Project\\Fiddler_key\\FiddlerRoot.crt',
-                                     proxies={
-                                         'http':'http://127.0.0.1:8888',
-                                         'https':'http://127.0.0.1:8888'
-                                    })
+                                     ))
         except requests.exceptions.RequestException as e:
             logging.error('RDP authentication exception failure: %s' % (e))
 

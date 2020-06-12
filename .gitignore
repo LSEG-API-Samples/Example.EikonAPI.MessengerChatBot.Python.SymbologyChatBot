@@ -3,5 +3,6 @@ documents/
 internal_dev/
 chatbot_symbology/
 src/isin_test.py
+src/str_test.py
 src/chatbot_demo_ws.py
 src/__pycache__

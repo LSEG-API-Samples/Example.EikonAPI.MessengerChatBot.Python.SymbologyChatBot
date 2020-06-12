@@ -19,20 +19,23 @@ import websocket
 import threading
 import random
 import logging
-from rdp_token import RDPTokenManagement
 
+from string import Template
+import re
+
+from rdp_token import RDPTokenManagement
 import eikon as ek
 
 # Input your Bot Username
-bot_username = '---YOUR BOT USERNAME---'
+bot_username = ''
 # Input Bot Password
-bot_password = '---YOUR BOT PASSWORD---'
+bot_password = ''
 # Input your Messenger account AppKey.
-app_key = '---YOUR MESSENGER ACCOUNT APPKEY---'
+app_key = ''
 
 
 # Input your Refinitiv Workspace/Eikon Desktop Data API App Key
-data_api_appkey = '37fbf5bcbd8949dcaa0c6ad3d95577118268e1b1'#'---YOUR DATA API APPKEY---'
+data_api_appkey = ''#'---YOUR DATA API APPKEY---'
 
 # Setting Log level the supported value is 'logging.INFO' and 'logging.DEBUG'
 log_level = logging.DEBUG
@@ -53,6 +56,18 @@ joined_rooms = None
 ws_url = 'wss://api.collab.refinitiv.com/services/nt/api/messenger/v1/stream'
 gw_url = 'https://api.refinitiv.com'
 bot_api_base_path = '/messenger/beta1'
+
+# Symbology Variables
+symbology_request_pattern = r'Please convert (?P<symbol>.*) from (?P<from>.*) to (?P<to>.*)'
+response_template = Template('@$sender, the $to_symbol_type instrument code of  $symbol is $converted_symbol')
+response_error_template = Template('@$sender, the $to_symbol_type instrument code of $symbol is not available')
+help_message = ('You can ask me to convert instrument code with this command\n'
+                '"Please convert <symbol> from <symbol type> to <symbole type  to convert to>"\n'
+                '- The supported <symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID and IMO\n'
+                '- The supported <symbole type  to convert to> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
+                '\n'
+                'Example:\n'
+                'Please convert IBM.N from RIC to ISIN')
 
 # =============================== RDP and Messenger BOT API functions ========================================
 
@@ -199,9 +214,20 @@ def leave_chatroom(access_token, joined_rooms, room_id=None, room_is_managed=Fal
 
 # =============================== Data API functions ========================================
 
-def convert_symbology(symbol):
-    isin_code = ek.get_symbology(symbol, from_symbol_type='RIC', to_symbol_type='ISIN')
-    return isin_code.loc[symbol, 'ISIN']
+def convert_symbology(symbol, original_symbol_type = 'RIC', target_symbol_type = 'ISIN'):
+    try:
+        response = ek.get_symbology(symbol, from_symbol_type= original_symbol_type, to_symbol_type = target_symbol_type, raw_output = True)
+        converted_result = True
+        converted_symbol = None
+        for key in response['mappedSymbols'][0]['bestMatch'].keys():
+            if key == 'error':
+                converted_result = False
+
+            converted_symbol = response['mappedSymbols'][0]['bestMatch'][key]
+        return converted_result, converted_symbol
+    except Exception as ex:
+        logging.error('Data API: get_symbology exception failure: %s' % ex)
+        return False, None
 
 # =============================== WebSocket functions ========================================
 
@@ -276,21 +302,34 @@ def process_message(message_json):  # Process incoming message from a joined Cha
         try:
             incoming_msg = message_json['post']['message']
             print('Receive text message: %s' % (incoming_msg))
-            if incoming_msg == '/help' or incoming_msg == 'C1' or incoming_msg == 'C2' or incoming_msg == 'C3':
-                post_message_to_chatroom(
-                    access_token, joined_rooms, chatroom_id, 'What would you like help with?\n ')
-            # Sending tabular data, hyperlinks and a full set of emoji in a message to a Chatroom
-            elif incoming_msg.lower() == '/complex_message':
-                complex_msg = """
-                USD BBL EU AM Assessment at 11:30 UKT\nName\tAsmt\t10-Apr-19\tFair Value\t10-Apr-19\tHst Cls\nBRT Sw APR19\t70.58\t05:07\t(up) 71.04\t10:58\t70.58\nBRTSw MAY19\t70.13\t05:07\t(dn) 70.59\t10:58\t70.14\nBRT Sw JUN19\t69.75\t05:07\t(up)70.2\t10:58\t69.76
-                """
-                post_message_to_chatroom(
-                    access_token, joined_rooms, chatroom_id, complex_msg)
-            # Receive Request for symbology
-            elif incoming_msg.lower() == 'ibm.n':
-                isin_code = convert_symbology(incoming_msg)
-                post_message_to_chatroom(
-                    access_token, joined_rooms, chatroom_id, 'ISIN Code for %s is %s\n ' % (incoming_msg, isin_code))
+            if incoming_msg == '/help':
+                #r'Please convert (?P<symbol>.*) from (?P<from>.*) to (?P<to>.*)'
+                
+                post_message_to_chatroom(access_token, joined_rooms, chatroom_id, help_message)
+            else:
+                try:
+                    match = re.match(symbology_request_pattern, incoming_msg)
+                    if match:
+                        symbol = match.group('symbol')
+                        from_symbol_type = match.group('from')
+                        to_symbol_type = match.group('to')
+
+                        result, converted_code = convert_symbology(symbol,from_symbol_type, to_symbol_type )
+                        sender = message_json['post']['sender']['email']
+                        if result:
+                             response_message = response_template.substitute(sender = sender, 
+                             converted_symbol = converted_code, 
+                             symbol = symbol, 
+                             to_symbol_type = to_symbol_type)
+                        else:
+                            # response_error_template = Template('@$sender, the $to_symbol_type of $from_symbol_type $symbol is not available')
+                            response_message = response_error_template.substitute(sender = sender, to_symbol_type = to_symbol_type,  symbol = symbol)
+                       
+                        post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
+
+                except AttributeError as attrib_error:
+                    print('IOError Exception: %s' % attrib_error)
+
 
         except Exception as error:
             logging.error('Post meesage to a Chatroom fail : %s' % error)
@@ -342,6 +381,8 @@ if __name__ == '__main__':
         # Abort application
         sys.exit(1)
 
+    # Send Greeting message
+    post_message_to_chatroom( access_token, joined_rooms, chatroom_id, 'Hi, I am a chatbot symbology converter.\n\n' + help_message)
     # Connect to a Chatroom via a WebSocket connection
     print('Connecting to WebSocket %s ... ' % (ws_url))
     #websocket.enableTrace(True)
