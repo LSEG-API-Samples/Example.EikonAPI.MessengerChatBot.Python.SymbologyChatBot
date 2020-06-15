@@ -27,20 +27,18 @@ from rdp_token import RDPTokenManagement
 import eikon as ek
 
 # Input your Bot Username
-bot_username = ''
+bot_username = '' #'---YOUR BOT USERNAME---'
 # Input Bot Password
-bot_password = ''
+bot_password = '' #'---YOUR BOT PASSWORD---'
 # Input your Messenger account AppKey.
-app_key = ''
-
-
+app_key = '' #'---YOUR MESSENGER ACCOUNT APPKEY---'
 # Input your Refinitiv Workspace/Eikon Desktop Data API App Key
 data_api_appkey = ''#'---YOUR DATA API APPKEY---'
 
 # Setting Log level the supported value is 'logging.INFO' and 'logging.DEBUG'
 log_level = logging.DEBUG
 
-# Authentication and connection objectscls
+# Authentication and connection objects
 auth_token = None
 rdp_token = None
 access_token = None
@@ -57,17 +55,30 @@ ws_url = 'wss://api.collab.refinitiv.com/services/nt/api/messenger/v1/stream'
 gw_url = 'https://api.refinitiv.com'
 bot_api_base_path = '/messenger/beta1'
 
-# Symbology Variables
-symbology_request_pattern = r'Please convert (?P<symbol>.*) from (?P<from>.*) to (?P<to>.*)'
-response_template = Template('@$sender, the $to_symbol_type instrument code of  $symbol is $converted_symbol')
-response_error_template = Template('@$sender, the $to_symbol_type instrument code of $symbol is not available')
+
+# =============================== Symbology Variables ========================================
+# Covertion request message Regular Expression pattern
+symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<to>.*)'
+
+# Response messages templates
+response_template = Template('@$sender, the $target_symbol_type instrument code of  $symbol is $converted_symbol')
+response_error_template = Template('@$sender, the $target_symbol_type instrument code of $symbol is not available')
+response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
+
+# Dictionary to map between input <target symbol type> and Refinitiv Workspace instrument type fields
+symbol_dict = {'RIC':'TR.RIC','ISIN':'TR.ISIN','SEDOL':'TR.SEDOL',
+    'CUSIP':'TR.CUSIP','ticker':'TR.TickerSymbol','lipperID':'TR.LipperRICCode',
+    'IMO':'TR.AssetIMO','OAPermID':'TR.OrganizationID'}
+
+# Help/Instruction Message
 help_message = ('You can ask me to convert instrument code with this command\n'
-                '"Please convert <symbol> from <symbol type> to <symbole type  to convert to>"\n'
-                '- The supported <symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID and IMO\n'
-                '- The supported <symbole type  to convert to> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
-                '\n'
-                'Example:\n'
-                'Please convert IBM.N from RIC to ISIN')
+    '"Please convert <symbol> to <target symbol type>"\n'
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
+    '\n'
+    'Example:\n'
+    'Please convert IBM.N to ISIN')
+
 
 # =============================== RDP and Messenger BOT API functions ========================================
 
@@ -214,21 +225,17 @@ def leave_chatroom(access_token, joined_rooms, room_id=None, room_is_managed=Fal
 
 # =============================== Data API functions ========================================
 
-def convert_symbology(symbol, original_symbol_type = 'RIC', target_symbol_type = 'ISIN'):
+def convert_symbology(symbol, target_symbol_type = 'ISIN'):
+    converted_result = True
     try:
-        response = ek.get_symbology(symbol, from_symbol_type= original_symbol_type, to_symbol_type = target_symbol_type, raw_output = True)
-        converted_result = True
-        converted_symbol = None
-        for key in response['mappedSymbols'][0]['bestMatch'].keys():
-            if key == 'error':
+        if target_symbol_type in symbol_dict:
+            response = ek.get_data(symbol,symbol_dict[target_symbol_type], raw_output = True)
+            if 'error' in response or not response['data'][0][1]: # The get_data can returns both 'error' and just empty/null result 
                 converted_result = False
-
-            converted_symbol = response['mappedSymbols'][0]['bestMatch'][key]
-        return converted_result, converted_symbol
+        return converted_result, response
     except Exception as ex:
-        logging.error('Data API: get_symbology exception failure: %s' % ex)
+        logging.error('Data API: get_data exception failure: %s' % ex)
         return False, None
-
 # =============================== WebSocket functions ========================================
 
 
@@ -308,24 +315,33 @@ def process_message(message_json):  # Process incoming message from a joined Cha
                 post_message_to_chatroom(access_token, joined_rooms, chatroom_id, help_message)
             else:
                 try:
-                    match = re.match(symbology_request_pattern, incoming_msg)
-                    if match:
+                    sender = message_json['post']['sender']['email'] # Get message's sender
+                    match = re.match(symbology_request_pattern, incoming_msg, flags=re.IGNORECASE) # match incoming message with Regular Expression
+                    response_message = None
+                    if match: # If incoming message match r'Please convert (?P<symbol>.*) to (?P<to>.*)' pattern, it is a convert request message.
                         symbol = match.group('symbol')
-                        from_symbol_type = match.group('from')
-                        to_symbol_type = match.group('to')
-
-                        result, converted_code = convert_symbology(symbol,from_symbol_type, to_symbol_type )
-                        sender = message_json['post']['sender']['email']
-                        if result:
-                             response_message = response_template.substitute(sender = sender, 
-                             converted_symbol = converted_code, 
-                             symbol = symbol, 
-                             to_symbol_type = to_symbol_type)
+                        target_symbol_type = match.group('to')
+                        if target_symbol_type in symbol_dict:
+                            result, converted_response = convert_symbology(symbol,target_symbol_type )
+                            if result: #Convert success
+                                response_message = response_template.substitute(sender = sender, 
+                                    converted_symbol = converted_response['data'][0][1], 
+                                    symbol = symbol, 
+                                    target_symbol_type = converted_response['headers'][0][1]['displayName'])
+                            else: #Convert fail or not found a match
+                                response_message = response_error_template.substitute(sender = sender, target_symbol_type = target_symbol_type,  symbol = symbol)
                         else:
-                            # response_error_template = Template('@$sender, the $to_symbol_type of $from_symbol_type $symbol is not available')
-                            response_message = response_error_template.substitute(sender = sender, to_symbol_type = to_symbol_type,  symbol = symbol)
-                       
-                        post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
+                            response_message = response_unsupported_type_template.substitute(sender = sender, target_symbol_type = target_symbol_type)
+                        
+                    else:
+                        response_message = ('@%s, unsupport command. Please use the following command to convert instrument code\n'
+                            '"Please convert <symbol> to <target symbol type>"\n'
+                            '\n'
+                            'Example:\n'
+                            'Please convert IBM.N to ISIN' % sender)
+                    
+                    # Send a message (convert result, or unsupport symbol type) to the chatroom.
+                    post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
 
                 except AttributeError as attrib_error:
                     print('IOError Exception: %s' % attrib_error)
@@ -344,6 +360,10 @@ if __name__ == '__main__':
 
     print('Setting Eikon Data API App Key')
     ek.set_app_key(data_api_appkey)
+    if ek.get_app_key() == data_api_appkey:
+        print('Please start Refinitiv Workspace in your local machine')
+        # Abort application
+        sys.exit(1)
 
     print('Getting RDP Authentication Token')
 
@@ -366,8 +386,6 @@ if __name__ == '__main__':
     if not chatroom_respone:
         # Abort application
         sys.exit(1)
-
-    #print(json.dumps(chatroom_respone, sort_keys=True,indent=2, separators=(',', ':')))
 
     chatroom_id = chatroom_respone['chatrooms'][0]['chatroomId']
     # print('Chatroom ID is ', chatroom_id)
