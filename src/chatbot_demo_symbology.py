@@ -36,7 +36,7 @@ app_key = '' #'---YOUR MESSENGER ACCOUNT APPKEY---'
 data_api_appkey = ''#'---YOUR DATA API APPKEY---'
 
 # Setting Log level the supported value is 'logging.INFO' and 'logging.DEBUG'
-log_level = logging.DEBUG
+log_level = logging.INFO
 
 # Authentication and connection objects
 auth_token = None
@@ -360,10 +360,14 @@ if __name__ == '__main__':
 
     print('Setting Eikon Data API App Key')
     ek.set_app_key(data_api_appkey)
-    if ek.get_app_key() == data_api_appkey:
+    ek_port_number = ek.get_port_number()
+    if ek_port_number != '9000':
         print('Please start Refinitiv Workspace in your local machine')
+        print(ek_port_number)
         # Abort application
         sys.exit(1)
+    else:
+        print('Initiate Eikon Data API success')
 
     print('Getting RDP Authentication Token')
 
