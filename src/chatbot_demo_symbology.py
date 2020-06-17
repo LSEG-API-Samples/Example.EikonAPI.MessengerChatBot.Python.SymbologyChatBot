@@ -23,24 +23,23 @@ import logging
 from string import Template
 import re
 
-from rdp_token import RDPTokenManagement
-import eikon as ek
+from rdp_token import RDPTokenManagement # Module for managing RDP session
+from dapi_session import DAPISessionManagement # Module for manaing Eikon Data API session
 
 # Input your Bot Username
-bot_username = '' #'---YOUR BOT USERNAME---'
+bot_username = ''---YOUR BOT USERNAME---'
 # Input Bot Password
-bot_password = '' #'---YOUR BOT PASSWORD---'
+bot_password = '---YOUR BOT PASSWORD---'
 # Input your Messenger account AppKey.
-app_key = '' #'---YOUR MESSENGER ACCOUNT APPKEY---'
-# Input your Refinitiv Workspace/Eikon Desktop Data API App Key
-data_api_appkey = ''#'---YOUR DATA API APPKEY---'
+app_key = '---YOUR MESSENGER ACCOUNT APPKEY---'
+# Input your Refinitiv Workspace/Eikon Desktop Eikon Data API App Key
+data_api_appkey = '---YOUR DATA API APPKEY---'
 
 # Setting Log level the supported value is 'logging.INFO' and 'logging.DEBUG'
-log_level = logging.INFO
+log_level = logging.DEBUG
 
 # Authentication and connection objects
 auth_token = None
-rdp_token = None
 access_token = None
 expire_time = 0
 logged_in = False
@@ -56,7 +55,10 @@ gw_url = 'https://api.refinitiv.com'
 bot_api_base_path = '/messenger/beta1'
 
 
-# =============================== Symbology Variables ========================================
+# =============================== Data API and Symbology Variables ========================================
+
+dapi = None
+
 # Covertion request message Regular Expression pattern
 symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<to>.*)'
 
@@ -66,6 +68,13 @@ response_error_template = Template('@$sender, the $target_symbol_type instrument
 response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
     'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
 
+response_unsupported_command = Template('@$sender, unsupport command. Please use the following command to convert instrument code\n'
+    '"Please convert <symbol> to <target symbol type>"\n'
+    '\n'
+    'Example:\n'
+    'Please convert IBM.N to ISIN')
+
+                            
 # Dictionary to map between input <target symbol type> and Refinitiv Workspace instrument type fields
 symbol_dict = {'RIC':'TR.RIC','ISIN':'TR.ISIN','SEDOL':'TR.SEDOL',
     'CUSIP':'TR.CUSIP','ticker':'TR.TickerSymbol','lipperID':'TR.LipperRICCode',
@@ -223,19 +232,6 @@ def leave_chatroom(access_token, joined_rooms, room_id=None, room_is_managed=Fal
 
     return joined_rooms
 
-# =============================== Data API functions ========================================
-
-def convert_symbology(symbol, target_symbol_type = 'ISIN'):
-    converted_result = True
-    try:
-        if target_symbol_type in symbol_dict:
-            response = ek.get_data(symbol,symbol_dict[target_symbol_type], raw_output = True)
-            if 'error' in response or not response['data'][0][1]: # The get_data can returns both 'error' and just empty/null result 
-                converted_result = False
-        return converted_result, response
-    except Exception as ex:
-        logging.error('Data API: get_data exception failure: %s' % ex)
-        return False, None
 # =============================== WebSocket functions ========================================
 
 
@@ -310,8 +306,6 @@ def process_message(message_json):  # Process incoming message from a joined Cha
             incoming_msg = message_json['post']['message']
             print('Receive text message: %s' % (incoming_msg))
             if incoming_msg == '/help':
-                #r'Please convert (?P<symbol>.*) from (?P<from>.*) to (?P<to>.*)'
-                
                 post_message_to_chatroom(access_token, joined_rooms, chatroom_id, help_message)
             else:
                 try:
@@ -322,29 +316,26 @@ def process_message(message_json):  # Process incoming message from a joined Cha
                         symbol = match.group('symbol')
                         target_symbol_type = match.group('to')
                         if target_symbol_type in symbol_dict:
-                            result, converted_response = convert_symbology(symbol,target_symbol_type )
+                            # convert symbology with Eikon Data API in DAPISessionManagement class
+                            result, converted_response = dapi.convert_symbology(symbol, symbol_dict[target_symbol_type])
                             if result: #Convert success
                                 response_message = response_template.substitute(sender = sender, 
-                                    converted_symbol = converted_response['data'][0][1], 
+                                    converted_symbol = converted_response['data'][0][1], # Get converted symbol result
                                     symbol = symbol, 
-                                    target_symbol_type = converted_response['headers'][0][1]['displayName'])
-                            else: #Convert fail or not found a match
+                                    target_symbol_type = converted_response['headers'][0][1]['displayName']) 
+                            else: # convert fail or not found a match
                                 response_message = response_error_template.substitute(sender = sender, target_symbol_type = target_symbol_type,  symbol = symbol)
                         else:
                             response_message = response_unsupported_type_template.substitute(sender = sender, target_symbol_type = target_symbol_type)
                         
                     else:
-                        response_message = ('@%s, unsupport command. Please use the following command to convert instrument code\n'
-                            '"Please convert <symbol> to <target symbol type>"\n'
-                            '\n'
-                            'Example:\n'
-                            'Please convert IBM.N to ISIN' % sender)
+                        response_message = response_unsupported_command.substitute(sender = sender)
                     
                     # Send a message (convert result, or unsupport symbol type) to the chatroom.
                     post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
 
                 except AttributeError as attrib_error:
-                    print('IOError Exception: %s' % attrib_error)
+                    logging.error('IOError Exception: %s' % attrib_error)
 
 
         except Exception as error:
@@ -352,18 +343,17 @@ def process_message(message_json):  # Process incoming message from a joined Cha
 
 
 # =============================== Main Process ========================================
-# Running the tutorial
+# Running the demo
 if __name__ == '__main__':
 
     # Setting Python Logging
     logging.basicConfig(format='%(asctime)s: %(levelname)s:%(name)s :%(message)s', level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
 
     print('Setting Eikon Data API App Key')
-    ek.set_app_key(data_api_appkey)
-    ek_port_number = ek.get_port_number()
-    if ek_port_number != '9000':
+    # Create and initiate DAPISessionManagement object
+    dapi = DAPISessionManagement(data_api_appkey)
+    if not dapi.verify_desktop_connection(): #if init session with Refinitiv Workspace/Eikon Desktop success
         print('Please start Refinitiv Workspace in your local machine')
-        print(ek_port_number)
         # Abort application
         sys.exit(1)
     else:
