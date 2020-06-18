@@ -6,9 +6,10 @@
 # |-----------------------------------------------------------------------------
 
 # |-----------------------------------------------------------------------------
-# |          Refinitiv Messenger BOT API via HTTP REST and WebSocket          --
+# |        Refinitiv Messenger BOT API Chat Bot with Eikon Data AP            --
 # |-----------------------------------------------------------------------------
 
+# Import the required libraries for Eikon and JSON operations
 import sys
 import time
 import getopt
