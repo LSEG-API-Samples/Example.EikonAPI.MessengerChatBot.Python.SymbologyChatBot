@@ -27,7 +27,7 @@ from rdp_token import RDPTokenManagement # Module for managing RDP session
 from dapi_session import DAPISessionManagement # Module for manaing Eikon Data API session
 
 # Input your Bot Username
-bot_username = ''---YOUR BOT USERNAME---'
+bot_username = '---YOUR BOT USERNAME---'
 # Input Bot Password
 bot_password = '---YOUR BOT PASSWORD---'
 # Input your Messenger account AppKey.
@@ -60,7 +60,7 @@ bot_api_base_path = '/messenger/beta1'
 dapi = None
 
 # Covertion request message Regular Expression pattern
-symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<to>.*)'
+symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)'
 
 # Response messages templates
 response_template = Template('@$sender, the $target_symbol_type instrument code of  $symbol is $converted_symbol')
@@ -297,7 +297,7 @@ def send_ws_keepalive(access_token):
     logging.info('Sent: %s' % (json.dumps(connect_request_msg, sort_keys=True, indent=2, separators=(',', ':'))))
 
 
-def process_message(message_json):  # Process incoming message from a joined Chatroom
+def process_message(message_json):  # Process incoming message from a joined Chatroom via the WebSocket connection
 
     message_event = message_json['event']
 
@@ -305,17 +305,18 @@ def process_message(message_json):  # Process incoming message from a joined Cha
         try:
             incoming_msg = message_json['post']['message']
             print('Receive text message: %s' % (incoming_msg))
-            if incoming_msg == '/help':
+            if incoming_msg == '/help': # if users request for help, response with a help message
                 post_message_to_chatroom(access_token, joined_rooms, chatroom_id, help_message)
-            else:
+            else: # otherwise, check incoming message patter
                 try:
                     sender = message_json['post']['sender']['email'] # Get message's sender
+
                     match = re.match(symbology_request_pattern, incoming_msg, flags=re.IGNORECASE) # match incoming message with Regular Expression
                     response_message = None
-                    if match: # If incoming message match r'Please convert (?P<symbol>.*) to (?P<to>.*)' pattern, it is a convert request message.
-                        symbol = match.group('symbol')
-                        target_symbol_type = match.group('to')
-                        if target_symbol_type in symbol_dict:
+                    if match: # If incoming message match r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)' pattern, it is a symbologyconvert request message.
+                        symbol = match.group('symbol') # get requested symbol
+                        target_symbol_type = match.group('target_symbol_type') # get target_symbol_type 
+                        if target_symbol_type in symbol_dict: # check if user input a supported instrument code type
                             # convert symbology with Eikon Data API in DAPISessionManagement class
                             result, converted_response = dapi.convert_symbology(symbol, symbol_dict[target_symbol_type])
                             if result: #Convert success
@@ -325,10 +326,10 @@ def process_message(message_json):  # Process incoming message from a joined Cha
                                     target_symbol_type = converted_response['headers'][0][1]['displayName']) 
                             else: # convert fail or not found a match
                                 response_message = response_error_template.substitute(sender = sender, target_symbol_type = target_symbol_type,  symbol = symbol)
-                        else:
+                        else: # if user request for an unsupported instrument code type
                             response_message = response_unsupported_type_template.substitute(sender = sender, target_symbol_type = target_symbol_type)
                         
-                    else:
+                    else: # If user input other messages
                         response_message = response_unsupported_command.substitute(sender = sender)
                     
                     # Send a message (convert result, or unsupport symbol type) to the chatroom.
