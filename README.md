@@ -1,4 +1,4 @@
-# Build the Symbology Convertion Chat Bot with Refinitiv Messenger Bot and Eikon Data APIs
+# Build the Symbology Conversion Chat Bot with Refinitiv Messenger Bot and Eikon Data APIs
 - version: 1.0.0
 - Last update: June 2020
 - Environment: Windows
@@ -23,9 +23,9 @@ The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api)
 * [Authors](#author)
 * [References](#references)
 
-## <a id="overview"></a>Symbology Convertion Chat Bot Demo overview
+## <a id="overview"></a>Symbology Conversion Chat Bot Demo overview
 
-This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology convertion request from users in the chatroom, then uses Eikon Data API to covert the requested symbol and lets the Bot API response to user. 
+This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API to covert the requested symbol and lets the Bot API response to user. 
 
 ![Figure-1](images/chat_bot_symbology_result.png "Chatbot Symbology") 
 
