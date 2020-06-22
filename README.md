@@ -18,6 +18,7 @@ The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api)
 * [Getting the AppKey value](#appkey)
 * [Setting the Messenger application](#setting)
 * [Project Application Files](#project-files)
+* [Development Detail](#development-details)
 * [Running the demo application](#running-demo)
 * [Next Step](#next-step)
 * [Authors](#author)
@@ -100,6 +101,10 @@ This demo project contains the following files and folders
 6. *requirements.txt*: The project dependencies configurationf file .
 5. LICENSE.md: Project's license file.
 9. README.md: Project's README file.
+
+## <a id="development-details"></a>Development Detail
+
+Please refer to [Development Detail document page](./Development_Detail.md).
 
 ## <a id="running-demo"></a>Running the demo application
 
