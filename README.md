@@ -137,7 +137,9 @@ The first step is unzip or download the example project folder into a directory 
 
 ## <a id="next-step"></a>Next Step
 
-This demo project demonstrates a simple chat bot interaction mechanism for a basic request-response chat message only. For more advance chat bot interaction, please see [How to build Refinitiv Messenger Interactive ChatBot with Python Machine Learning and Messenger Bot API](https://developers.refinitiv.com/article/build-refinitiv-messenger-interactive-chat-bot-python-machine-learning-and-messenger-bot-api) article. That article shows how to integrate Chat Bot with Machine Learning for more nature and better bot interaction experience. 
+The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to intergate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
+
+For more advance chat bot interaction, please see [How to build Refinitiv Messenger Interactive ChatBot with Python Machine Learning and Messenger Bot API](https://developers.refinitiv.com/article/build-refinitiv-messenger-interactive-chat-bot-python-machine-learning-and-messenger-bot-api) article which show how to integrate Chat Bot with Machine Learning. 
 
 ## <a id="author"></a>Authors
 - Wasin Waeosri (wasin.waeosri@refinitiv.com)
@@ -153,7 +155,7 @@ For further details, please check out the following resources:
 * [Eikon Data API Quick Start Guide page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/quick-start).
 * [Eikon Data API Tutorial page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/learning).
 * [Python Quants Video Tutorial Series for Eikon API](https://community.developers.refinitiv.com/questions/37865/announcement-new-python-quants-video-tutorial-seri.html).
-* [Eikon Data APY Python Reference Guide](https://docs-developers.refinitiv.com/1584688434238/14684/book/en/index.html).
+* [Eikon Data API Python Reference Guide](https://docs-developers.refinitiv.com/1584688434238/14684/book/en/index.html).
 * [Eikon Data API Troubleshooting article](https://developers.refinitiv.com/article/eikon-data-apipython-troubleshooting-refinitiv).
 * [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/docs?content=49692&type=documentation_item).
 * [Refinitiv Data Platform APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis).

@@ -119,7 +119,8 @@ class DAPISessionManagement:
 
 ## <a id="dapi-symbology-conversion"></a>Eikon Data API Symbology Conversion
 
-Lastly, the DAPISessionManagement class uses Eikon Data API ```get_data()``` function to get the request symbology of interested symbol. The reason that the clase choose this Eikon Data API function over ```get_symbology()``` function is the user does not require to input *an instrument code to convert from* value, users just input the symbol and *an instrument code to convert to* information to the bot. The symbology bot will do the rest for users.
+Lastly, the DAPISessionManagement class uses Eikon Data API ```get_data()``` function to get the request symbology of interested symbol. The reason that the class choose this function over ```get_symbology()``` function is because the user does not require to input *an instrument code to convert from* value, users just input the symbol and *an instrument code to convert to* information to the bot. The symbology bot will do the rest for users.
+
 
 ```
 # dapi_session.py file
@@ -224,7 +225,7 @@ help_message = ('You can ask me to convert instrument code with this command\n'
     'Please convert IBM.N to ISIN')
 ```
 
-The ```symbol_dict``` dictionary will be used for mapping between readble instrument code types (```RIC```, ```ISIN```,```OAPermID```) and the Eikon Data API fields (```TR.RIC```, ```TR.ISIN```, ```TR.OrganizationID```).
+The ```symbol_dict``` dictionary will be used for mapping from readble instrument code types (```RIC```, ```ISIN```,```OAPermID```) to the Eikon Data API fields (```TR.RIC```, ```TR.ISIN```, ```TR.OrganizationID```).
 
 ## <a id="send-welcome"></a>Sending the Welcom message
 
@@ -404,13 +405,7 @@ else: # otherwise, check incoming message patter
             if target_symbol_type in symbol_dict: # check if user input a supported instrument code type
                 # convert symbology with Eikon Data API in DAPISessionManagement class
                 result, converted_response = dapi.convert_symbology(symbol, symbol_dict[target_symbol_type])
-                if result: #Convert success
-                    response_message = response_template.substitute(sender = sender, 
-                        converted_symbol = converted_response['data'][0][1], # Get converted symbol result
-                        symbol = symbol, 
-                        target_symbol_type = converted_response['headers'][0][1]['displayName']) 
-                else: # convert fail or not found a match
-                    response_message = response_error_template.substitute(sender = sender, target_symbol_type = target_symbol_type,  symbol = symbol)
+                # process result.
             else: # if user request for an unsupported instrument code type
                 response_message = response_unsupported_type_template.substitute(sender = sender, target_symbol_type = target_symbol_type)
                         
@@ -425,7 +420,24 @@ else: # otherwise, check incoming message patter
 
 ```
 
-The applciation also needs to handle a symbology coversion success and fail case differently in order to give a proper response message to user via a chat room. The ```DAPISessionManagement.convert_symbology()``` function returns 2 values to the applciation, the conversion result (**True** or **False**) and Eikon Data API JSON response message. 
+The applciation also needs to handle a symbology coversion success and fail case differently in order to give a proper response message to user via a chat room. The ```DAPISessionManagement.convert_symbology()``` function returns 2 values to the applciation, the conversion ```result```  (**True** or **False**) and Eikon Data API JSON response message in ```converted_response``` variable. 
+
+The chat bot choose a response message template that will be posted to a chat room based on the ```result``` value.
+```
+# process_message() function
+# if target_symbol_type in symbol_dict:
+
+# convert symbology with Eikon Data API in DAPISessionManagement class
+result, converted_response = dapi.convert_symbology(symbol, symbol_dict[target_symbol_type])
+if result: #Convert success
+    response_message = response_template.substitute(sender = sender, 
+        converted_symbol = converted_response['data'][0][1], # Get converted symbol result
+        symbol = symbol, 
+        target_symbol_type = converted_response['headers'][0][1]['displayName']) 
+else: # convert fail or not found a match
+    response_message = response_error_template.substitute(sender = sender, target_symbol_type = target_symbol_type,  symbol = symbol)
+
+```
 
 **If conversion result is True**: The example response message from the chat bot is following:
 
@@ -443,12 +455,8 @@ The applciation also needs to handle a symbology coversion success and fail case
 
 ![Figure-8](images/unsupport_command.png "Unsupported command handler") 
 
-## <a id="running-demo"></a>Running the demo application
-
-Please see more detail in [README.md](./README.md) file.
 
 ## <a id="conclusion"></a>Conclusion
 
 The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to intergate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
 
-For more advance chat bot interaction, please see [How to build Refinitiv Messenger Interactive ChatBot with Python Machine Learning and Messenger Bot API](https://developers.refinitiv.com/article/build-refinitiv-messenger-interactive-chat-bot-python-machine-learning-and-messenger-bot-api) article which show how to integrate Chat Bot with Machine Learning. 
