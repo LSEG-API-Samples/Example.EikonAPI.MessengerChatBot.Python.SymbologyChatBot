@@ -20,7 +20,7 @@ This demo application shows how to integrates [Messenger Bot API](https://develo
 * [Message Rate Throttling](#message-throttle)
 * [Eikon Data API integration](#dapi-integration)
 * [Eikon Data API Symbology Conversion](#dapi-symbology-conversion)
-* [Sending the Welcom message](#send-welcome)
+* [Sending the Welcome message](#send-welcome)
 * [Receive Chat Room chat Messages](#receive-messages)
 * [Symbology Conversion Message Operations](#symbology-operations)
 * [Running the demo application](#running-demo)
@@ -40,7 +40,7 @@ This demo project requires the following dependencies.
 
 ## <a id="chatbot-workflow"></a>Messenger Bot API Application Workflow
 
-The Messenger Bot API application workflow combines the usage or RDP APIs with the HTTP REST API with the Bot REST and WebSocket APIs. The applciation gets access credential from the RDP Auth Service, than joins the chat room and connects to the Messgener Bot API WebSocket server. The application receives messages in the chat room via the WebSocket connection, then sends message back the chat room with the HTTP REST API. The application needs to keep renew access credential on both Authentication service and the WebSocket connection before that token is expired. Please see a full detail below:
+The Messenger Bot API application workflow combines the usage or RDP APIs with the HTTP REST API with the Bot REST and WebSocket APIs. The application gets access credential from the RDP Auth Service, than joins the chat room and connects to the Messenger Bot API WebSocket server. The application receives messages in the chat room via the WebSocket connection, then sends message back the chat room with the HTTP REST API. The application needs to keep renew access credential on both Authentication service and the WebSocket connection before that token is expired. Please see a full detail below:
 
 1. Connect to Refinitiv Data Platform API (RDP API) and obtain access token, refresh token and session expiration interval for your application ID/username.
 2. Get the list of chat rooms from Messenger Bot API via HTTP REST.
@@ -55,14 +55,14 @@ The Messenger Bot API application workflow combines the usage or RDP APIs with t
 
 ### <a id="authen_process"></a>RDP Authentication Process
 
-Refinitiv Data Platform entitlement check is based on OAuth 2.0 specification. The first step of an application work flow is to get a token, which will allow access to the protected resource, i.e. data REST API's. For the full detail and explanation of RDP Authentication process applciation workflow, please refer to the following RDP APIS tutorials:
+Refinitiv Data Platform entitlement check is based on OAuth 2.0 specification. The first step of an application work flow is to get a token, which will allow access to the protected resource, i.e. data REST API's. For the full detail and explanation of RDP Authentication process application workflow, please refer to the following RDP APIS tutorials:
 * [Introduction to the Request-Response API](https://developers.refinitiv.com/requestresponse-apis/learning?content=38560&type=learning_material_item).
 * [Authorization - All about tokens](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning?content=38562&type=learning_material_item).
 * [Authorization in Python](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning?content=39322&type=learning_material_item).
 
-The *chatbot_demo_symbology.py* application file utilizes  ```RDPTokenManagement``` class of *rdp_token.py* Python module file to manage all RDP operations and authetication process. This module source code is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal with modification to support the WebSocket connection scenario.
+The *chatbot_demo_symbology.py* application file utilizes  ```RDPTokenManagement``` class of *rdp_token.py* Python module file to manage all RDP operations and authentication process. This module source code is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal with modification to support the WebSocket connection scenario.
 
-### <a id="chatbot-workflow_2"></a>Joing the Chat Room, Send and Receive Chat Room Messages.
+### <a id="chatbot-workflow_2"></a>Joining the Chat Room, Send and Receive Chat Room Messages.
 
 Once the application success authenticated with RDP Auth Service, the application can send 1-to-1 message to user in Messenger application, join a chat room, receive and post message to a joined chat room. 
 
@@ -71,13 +71,13 @@ Please refer to [Messenger BOT API Quick Start Guide](https://developers.refinit
 
 ## <a id="message-throttle"></a>Message Rate Throttling
 
-Pleae note that A throttling mechanism limits messages to a maximum rate of one message per second.
+Please note that A throttling mechanism limits messages to a maximum rate of one message per second.
 
 An error is returned if this limit is exceeded.
 
 ## <a id="dapi-integration"></a>Eikon Data API integration
 
-The *chatbot_demo_symbology.py* application file utilizes  ```DAPISessionManagement``` class of *dapi_session.py* Python module file to manage all Eikon Data API operations. The DAPISessionManagement class receives the Eikon Data API App Key from the application, then itimports the library and set the App Key of the application. The application is now ready to send data retrieval requests.
+The *chatbot_demo_symbology.py* application file utilizes  ```DAPISessionManagement``` class of *dapi_session.py* Python module file to manage all Eikon Data API operations. The DAPISessionManagement class receives the Eikon Data API App Key from the application, then it imports the library and set the App Key of the application. The application is now ready to send data retrieval requests.
 
 ```
 # dapi_session.py file
@@ -98,7 +98,7 @@ class DAPISessionManagement:
 
 ```
 
-The DAPISessionManagement class also let the chat bot application check if it success initiaite session with Refinitiv Workspace/Eikon Desktop application or not via the ```verify_desktop_connection()``` function. This function uses Eikon Data API ```get_port_number()``` which returns the port number used to communicate with the Eikon Data API Proxy. If the connection success, it always returns a default port "9000".
+The DAPISessionManagement class also let the chat bot application check if it success initiate session with Refinitiv Workspace/Eikon Desktop application or not via the ```verify_desktop_connection()``` function. This function uses Eikon Data API ```get_port_number()``` which returns the port number used to communicate with the Eikon Data API Proxy. If the connection success, it always returns a default port "9000".
 
 ```
 # dapi_session.py file
@@ -119,8 +119,9 @@ class DAPISessionManagement:
 
 ## <a id="dapi-symbology-conversion"></a>Eikon Data API Symbology Conversion
 
-Lastly, the DAPISessionManagement class uses Eikon Data API ```get_data()``` function to get the request symbology of interested symbol. The reason that the class choose this function over ```get_symbology()``` function is because the user does not require to input *an instrument code to convert from* value, users just input the symbol and *an instrument code to convert to* information to the bot. The symbology bot will do the rest for users.
+Lastly, the DAPISessionManagement class uses Eikon Data API ```get_data()``` function to get the request instrument code of the inputted symbol via Refinitiv instrument code fields such as ```TR.RIC```, ```TR.ISIN```, ```TR.SEDOL```. 
 
+Please note that you can choose Eikon Data API ```get_symbology()``` function which returns instrument names converted into another instrument code instead in your own implementation. This demo application choose ```get_data()``` function because user does not require to input *an instrument code to convert from* parameter like the ```get_symbology()``` function.
 
 ```
 # dapi_session.py file
@@ -154,18 +155,18 @@ class DAPISessionManagement:
 
 ```
 
-By default, the Eikon Data API ```get_data()``` function returns data as DataFrame object. However, since this is a console application, so the DAPISessionManagement class set ```raw_output = True``` parameter to ```get_data()``` function which makes the function returns data as JSON message instead. If the JSON response message contain *error* attribute or an empy result, it means the conversion is fail.
+By default, the Eikon Data API ```get_data()``` function returns data as DataFrame object. However, since this is a console application, so the DAPISessionManagement class set ```raw_output = True``` parameter to ```get_data()``` function which makes the function returns data as JSON message instead. If the JSON response message contain *error* attribute or an empty result, it means the conversion is fail.
 
 Now the ```DAPISessionManagement``` class of *dapi_session.py* is ready to handle all Eikon Data API operations for the main application. 
 
-### <a id="dapi_import"></a>Import DAPISessionManagement into Chat Bot Applciation
+### <a id="dapi_import"></a>Import DAPISessionManagement into Chat Bot Application
 
-The chatbot_demo_symbology.py application then imports DAPISessionManagement class from dapi_session.py module. The applciation also checks if the Eikon Data API success connect to Refinitiv Workspace/Eikon Desktop application by checking the ```verify_desktop_connection()``` function.
+The chatbot_demo_symbology.py application then imports DAPISessionManagement class from dapi_session.py module. The application also checks if the Eikon Data API success connect to Refinitiv Workspace/Eikon Desktop application by checking the ```verify_desktop_connection()``` function.
 
 ```
 # chatbot_demo_symbology.py
 
-from dapi_session import DAPISessionManagement # Module for manaing Eikon Data API session
+from dapi_session import DAPISessionManagement # Module for managing Eikon Data API session
 
 # Input your Refinitiv Workspace/Eikon Desktop Eikon Data API App Key
 data_api_appkey = '---YOUR DATA API APPKEY---'
@@ -195,7 +196,7 @@ import re
 
 # =============================== Data API and Symbology Variables ========================================
 
-# Covertion request message Regular Expression pattern
+# Conversion request message Regular Expression pattern
 symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)'
 
 # Response messages templates
@@ -204,7 +205,7 @@ response_error_template = Template('@$sender, the $target_symbol_type instrument
 response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
     'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
 
-response_unsupported_command = Template('@$sender, unsupport command. Please use the following command to convert instrument code\n'
+response_unsupported_command = Template('@$sender, unsupported command. Please use the following command to convert instrument code\n'
     '"Please convert <symbol> to <target symbol type>"\n'
     '\n'
     'Example:\n'
@@ -225,11 +226,11 @@ help_message = ('You can ask me to convert instrument code with this command\n'
     'Please convert IBM.N to ISIN')
 ```
 
-The ```symbol_dict``` dictionary will be used for mapping from readble instrument code types (```RIC```, ```ISIN```,```OAPermID```) to the Eikon Data API fields (```TR.RIC```, ```TR.ISIN```, ```TR.OrganizationID```).
+The ```symbol_dict``` dictionary will be used for mapping from readable instrument code types (```RIC```, ```ISIN```,```OAPermID```) to the Eikon Data API fields (```TR.RIC```, ```TR.ISIN```, ```TR.OrganizationID```).
 
-## <a id="send-welcome"></a>Sending the Welcom message
+## <a id="send-welcome"></a>Sending the Welcome message
 
-Once the application success authenticates with RDP Auth Service and joins the associate chat room, the application sends a welcome message to notify user regarding how to use symbology conersion ccommand. The welcome message is following:
+Once the application success authenticates with RDP Auth Service and joins the associate chat room, the application sends a welcome message to notify user regarding how to use symbology conversion command. The welcome message is following:
 
 ```
 Hi, I am a chatbot symbology converter.
@@ -307,7 +308,7 @@ The result is following:
 
 ## <a id="receive-messages"></a>Receive Chat Room chat Messages
 
-Once the chat bot application connects to the Messager Bot API WebSocket server, all chat messages from users in the chat room will be available to the applciation via WebSocket's ```on_message``` event in JSON format. The JSON message format is following:
+Once the chat bot application connects to the Messenger Bot API WebSocket server, all chat messages from users in the chat room will be available to the application via WebSocket's ```on_message``` event in JSON format. The JSON message format is following:
 
 ```
 {
@@ -325,7 +326,7 @@ Once the chat bot application connects to the Messager Bot API WebSocket server,
 }
 ```
 
-The Symbology chat bot applciation then passes incoming JSON message to ```process_message()``` function to process users messsages. 
+The Symbology chat bot application then passes incoming JSON message to ```process_message()``` function to process users messages. 
 
 ```
 # =============================== WebSocket functions ========================================
@@ -349,7 +350,7 @@ def process_message(message_json):
 Lets focus on how the ```process_message()``` function handles symbology request message from the user. The chat bot demo needs to support various use cases such as the following:
 1. User request for the help message via ```/help``` command.
 2. User post a valid conversion request message. 
-2. User post a valid message but wrong instument code type.
+2. User post a valid message but wrong instrument code type.
 3. User post invalid message to a chat room. 
 
 The below diagram show the symbology conversion workflow. The blue box is a bot response to a chat room.
@@ -375,7 +376,7 @@ def process_message(message_json):  # Process incoming message from a joined Cha
                 ...
 
         except Exception as error:
-            logging.error('Post meesage to a Chatroom fail : %s' % error)
+            logging.error('Post message to a Chatroom fail : %s' % error)
 ```
 
 The result is following:
@@ -386,7 +387,7 @@ The result is following:
 
 This part focus heavily on the Regular Expression matching result of user's post message and  ```'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)'``` command pattern. The input symbol will be available via ```<symbol>``` group and the target instrument code will be available ```<target_symbol_type>``` group. 
 
-The application also get the *user email* information from incoming JSON message to let the Bot respones to a correct person who post the conversion request.
+The application also get the *user email* information from incoming JSON message to let the Bot response to a correct person who post the conversion request.
 
 ```
 # process_message() function
@@ -399,7 +400,7 @@ else: # otherwise, check incoming message patter
 
         match = re.match(symbology_request_pattern, incoming_msg, flags=re.IGNORECASE) # match incoming message with Regular Expression
         response_message = None
-        if match: # If incoming message match r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)' pattern, it is a symbologyconvert request message.
+        if match: # If incoming message match r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)' pattern, it is a symbology convert request message.
             symbol = match.group('symbol') # get requested symbol
             target_symbol_type = match.group('target_symbol_type') # get target_symbol_type 
             if target_symbol_type in symbol_dict: # check if user input a supported instrument code type
@@ -412,7 +413,7 @@ else: # otherwise, check incoming message patter
         else: # If user input other messages
             response_message = response_unsupported_command.substitute(sender = sender)
                     
-        # Send a message (convert result, or unsupport symbol type) to the chatroom.
+        # Send a message (convert result, or unsupported symbol type) to the chatroom.
         post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
 
     except AttributeError as attrib_error:
@@ -420,7 +421,7 @@ else: # otherwise, check incoming message patter
 
 ```
 
-The applciation also needs to handle a symbology coversion success and fail case differently in order to give a proper response message to user via a chat room. The ```DAPISessionManagement.convert_symbology()``` function returns 2 values to the applciation, the conversion ```result```  (**True** or **False**) and Eikon Data API JSON response message in ```converted_response``` variable. 
+The application also needs to handle a symbology conversion success and fail case differently in order to give a proper response message to user via a chat room. The ```DAPISessionManagement.convert_symbology()``` function returns 2 values to the application, the conversion ```result```  (**True** or **False**) and Eikon Data API JSON response message in ```converted_response``` variable. 
 
 The chat bot choose a response message template that will be posted to a chat room based on the ```result``` value.
 ```
@@ -449,14 +450,14 @@ else: # convert fail or not found a match
 
 **If user request for unsupported instrument code**: The example response message from the chat bot is following:
 
-![Figure-7](images/unsupport_type.png "Unsupported instrument code type handle") 
+![Figure-7](images/unsupported_type.png "Unsupported instrument code type handle") 
 
 **If user post other message to chat room**: The example response message from the chat bot is following:
 
-![Figure-8](images/unsupport_command.png "Unsupported command handler") 
+![Figure-8](images/unsupported_command.png "Unsupported command handler") 
 
 
 ## <a id="conclusion"></a>Conclusion
 
-The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to intergate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
+The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to integrate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
 
