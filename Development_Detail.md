@@ -40,9 +40,9 @@ This demo project requires the following dependencies.
 
 ## <a id="chatbot-workflow"></a>Messenger Bot API Application Workflow
 
-The Messenger Bot API application workflow combines the usage or RDP APIs with the HTTP REST API with the Bot REST and WebSocket APIs. The application gets access credential from the RDP Auth Service, than joins the chat room and connects to the Messenger Bot API WebSocket server. The application receives messages in the chat room via the WebSocket connection, then sends message back the chat room with the HTTP REST API. The application needs to keep renew access credential on both Authentication service and the WebSocket connection before that token is expired. Please see a full detail below:
+The Messenger Bot API application workflow combines the usage of RDP APIs HTTP REST API with the Bot REST and WebSocket APIs. The application gets access credential from the RDP Auth Service, than joins the chat room and connects to the Messenger Bot API WebSocket server. The application receives messages in the chat room via the WebSocket connection, then sends message back the chat room with the HTTP REST API. The application needs to keep renew access credential on both Authentication service and the WebSocket connection before that token is expired. Please see a full detail below:
 
-1. Connect to Refinitiv Data Platform API (RDP API) and obtain access token, refresh token and session expiration interval for your application ID/username.
+1. Authenticate with Refinitiv Data Platform API (RDP API) and obtain access token, refresh token and session expiration interval for your bot.
 2. Get the list of chat rooms from Messenger Bot API via HTTP REST.
 2. Join the selected chat room via HTTP REST API call. 
 4. Connect to Messenger Bot API WebSocket server.
@@ -77,7 +77,7 @@ An error is returned if this limit is exceeded.
 
 ## <a id="dapi-integration"></a>Eikon Data API integration
 
-The *chatbot_demo_symbology.py* application file utilizes  ```DAPISessionManagement``` class of *dapi_session.py* Python module file to manage all Eikon Data API operations. The DAPISessionManagement class receives the Eikon Data API App Key from the application, then it imports the library and set the App Key of the application. The application is now ready to send data retrieval requests.
+The *chatbot_demo_symbology.py* application file utilizes  ```DAPISessionManagement``` class of *dapi_session.py* Python module file to manage all Eikon Data API operations. The DAPISessionManagement class receives the Eikon Data API App Key from the application, then it imports the library and set the App Key of the application. The application is now ready to send data retrieval requests to Refinitiv.
 
 ```
 # dapi_session.py file
@@ -98,7 +98,7 @@ class DAPISessionManagement:
 
 ```
 
-The DAPISessionManagement class also let the chat bot application check if it success initiate session with Refinitiv Workspace/Eikon Desktop application or not via the ```verify_desktop_connection()``` function. This function uses Eikon Data API ```get_port_number()``` which returns the port number used to communicate with the Eikon Data API Proxy. If the connection success, it always returns a default port "9000".
+The DAPISessionManagement class also lets the chat bot application checks if it success initiate session with Refinitiv Workspace/Eikon Desktop application or not via the ```verify_desktop_connection()``` function. This function uses Eikon Data API ```get_port_number()``` which returns the port number used to communicate with the Eikon Data API Proxy. If the connection success, it always returns a default port "9000".
 
 ```
 # dapi_session.py file
@@ -123,6 +123,14 @@ Lastly, the DAPISessionManagement class uses Eikon Data API ```get_data()``` fun
 
 Please note that you can choose Eikon Data API ```get_symbology()``` function which returns instrument names converted into another instrument code instead in your own implementation. This demo application choose ```get_data()``` function because user does not require to input *an instrument code to convert from* parameter like the ```get_symbology()``` function.
 
+This demo application supports the following instrument codes conversion:
+- RIC (```TR.RIC```)
+- ISIN (```TR.ISIN```)
+- SEDOL (```TR.SEDOL```)
+- CUSIP (```TR.CUSIP```)
+- lipperID (```TR.LipperRICCode```)
+- OAPermID (```TR.OrganizationID```)
+
 ```
 # dapi_session.py file
 
@@ -136,9 +144,7 @@ class DAPISessionManagement:
         - TR.ISIN
         - TR.SEDOL
         - TR.CUSIP
-        - TR.TickerSymbol
         - TR.LipperRICCode
-        - TR.AssetIMO 
         - TR.OrganizationID
     '''
     def convert_symbology(self, symbol, target_symbol_type = 'TR.ISIN'):
@@ -203,7 +209,7 @@ symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<target_symbol
 response_template = Template('@$sender, the $target_symbol_type instrument code of  $symbol is $converted_symbol')
 response_error_template = Template('@$sender, the $target_symbol_type instrument code of $symbol is not available')
 response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n')
 
 response_unsupported_command = Template('@$sender, unsupported command. Please use the following command to convert instrument code\n'
     '"Please convert <symbol> to <target symbol type>"\n'
@@ -214,13 +220,12 @@ response_unsupported_command = Template('@$sender, unsupported command. Please u
                             
 # Dictionary to map between input <target symbol type> and Refinitiv Workspace instrument type fields
 symbol_dict = {'RIC':'TR.RIC','ISIN':'TR.ISIN','SEDOL':'TR.SEDOL',
-    'CUSIP':'TR.CUSIP','ticker':'TR.TickerSymbol','lipperID':'TR.LipperRICCode',
-    'IMO':'TR.AssetIMO','OAPermID':'TR.OrganizationID'}
+    'CUSIP':'TR.CUSIP','lipperID':'TR.LipperRICCode','OAPermID':'TR.OrganizationID'}
 
 # Help/Instruction Message
 help_message = ('You can ask me to convert instrument code with this command\n'
     '"Please convert <symbol> to <target symbol type>"\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n'
     '\n'
     'Example:\n'
     'Please convert IBM.N to ISIN')
@@ -237,7 +242,7 @@ Hi, I am a chatbot symbology converter.
 
 You can ask me to convert instrument code with this command
 "Please convert <symbol> to <target symbol type>"
-The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID
+The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID
 
 Example:
 Please convert IBM.N to ISIN

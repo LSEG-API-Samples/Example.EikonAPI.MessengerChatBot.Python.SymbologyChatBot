@@ -26,11 +26,19 @@ The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api)
 
 ## <a id="overview"></a>Symbology Conversion Chat Bot Demo overview
 
-This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API to covert the requested symbol and lets the Bot API response to user. 
+This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API coverts the requested symbol and lets the Bot API response to user. 
 
 ![Figure-1](images/chat_bot_symbology_result.png "Chatbot Symbology") 
 
-*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis) for more detail.
+This demo application supports the following instrument codes conversion:
+- RIC 
+- ISIN 
+- SEDOL 
+- CUSIP 
+- lipperID 
+- OAPermID
+
+*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis)  for more detail.
 
 ## <a id="usage-limit"></a>Eikon Data API Usage and Limits Guideline
 
@@ -67,7 +75,7 @@ You can generate your AppKey via the following steps:
 
 You will then see a row for your new app with an AppKey item, which is your client_id for the Refinitiv Data Platform (RDP) and Eikon Data API Authentication. 
 
-*Note*: You can create different App Key (client_id) for 'EDP API' and 'Eikon Data API' by just creating two application for each API type.
+*Note*: You can create a different App Key (client_id) for 'EDP API' and 'Eikon Data API' by just creating two applications for each API type.
 
 ## <a id="setting"></a>Setting the Messenger application
 
@@ -130,7 +138,7 @@ The first step is unzip or download the example project folder into a directory 
 6. Then demo application continues authentication process, get an associate chatroom, then join that chatroom. The bot will send a greeting message with the symbology command instruction.
     
     ![Figure-1](images/chat_bot_greeting.png "Chatbot greeting and help message") 
-7. You can ask the chatbot to convert instrument code type for you with ```Please convert <symbol> to <target_symbol_type>``` command. The supported ```<target_symbol_type>``` are CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID
+7. You can ask the chatbot to convert instrument code type for you with ```Please convert <symbol> to <target_symbol_type>``` command. The supported ```<target_symbol_type>``` are CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID
     
     ![Figure-2](images/chat_bot_interaction.png "Basic interaction") 
 8. If you forget the command, you can send ```/help``` message in to a Chatroom to see an example.

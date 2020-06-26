@@ -67,7 +67,7 @@ symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<target_symbol
 response_template = Template('@$sender, the $target_symbol_type instrument code of  $symbol is $converted_symbol')
 response_error_template = Template('@$sender, the $target_symbol_type instrument code of $symbol is not available')
 response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n')
 
 response_unsupported_command = Template('@$sender, unsupported command. Please use the following command to convert instrument code\n'
     '"Please convert <symbol> to <target symbol type>"\n'
@@ -78,13 +78,12 @@ response_unsupported_command = Template('@$sender, unsupported command. Please u
                             
 # Dictionary to map between input <target symbol type> and Refinitiv Workspace instrument type fields
 symbol_dict = {'RIC':'TR.RIC','ISIN':'TR.ISIN','SEDOL':'TR.SEDOL',
-    'CUSIP':'TR.CUSIP','ticker':'TR.TickerSymbol','lipperID':'TR.LipperRICCode',
-    'IMO':'TR.AssetIMO','OAPermID':'TR.OrganizationID'}
+    'CUSIP':'TR.CUSIP','lipperID':'TR.LipperRICCode','OAPermID':'TR.OrganizationID'}
 
 # Help/Instruction Message
 help_message = ('You can ask me to convert instrument code with this command\n'
     '"Please convert <symbol> to <target symbol type>"\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n'
     '\n'
     'Example:\n'
     'Please convert IBM.N to ISIN')
