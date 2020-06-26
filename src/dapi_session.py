@@ -29,9 +29,7 @@ class DAPISessionManagement:
         - TR.ISIN
         - TR.SEDOL
         - TR.CUSIP
-        - TR.TickerSymbol
         - TR.LipperRICCode
-        - TR.AssetIMO 
         - TR.OrganizationID
     '''
     def convert_symbology(self, symbol, target_symbol_type = 'TR.ISIN'):

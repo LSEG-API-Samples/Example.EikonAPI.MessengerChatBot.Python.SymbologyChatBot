@@ -7,9 +7,9 @@
 
 ## Messenger Bot API and Eikon Data API Introduction
 
-Refinitiv's [Messenger application](https://www.refinitiv.com/en/products/eikon-trading-software/eikon-messenger-securemessaging) is a free to use, compliant and secure messaging platform.  It is a powerful communication tool that provides desktop, mobile, and web access, and allows sharing messages, data, files, screenshots, and emoticons with your contacts. The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of available API calls to build automated workflows or bots for the Messenger application. The Bot API allows your applications to connect with and pass information into Eikon’s Messenger service programmatically or interact with a bot via a WebSocket connection.
+Refinitiv [Messenger application](https://www.refinitiv.com/en/products/eikon-trading-software/eikon-messenger-securemessaging) is a free to use, compliant and secure messaging platform.  It is a powerful communication tool that provides desktop, mobile, and web access, and allows sharing messages, data, files, screenshots, and emoticons with your contacts. The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of available API calls to build automated workflows or bots for the Messenger application. The Bot API allows your applications to connect with and pass information into Eikon’s Messenger service programmatically or interact with a bot via a WebSocket connection.
 
-The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) (or DAPI) for Python provides simple access for users who require programmatic access to Refinitiv data on the desktop. These APIs are intended for Refinitiv Workspace/Eikon Desktop application users. The API lets users access to the following Refinitiv content sets such as Fundamental and reference data, Price time series, News, Symbology conversion and etc. It is designed for ease of use and for rapid application development by leveraging Refintiv data and entitlements to simplify market data management and reporting.
+The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) (or DAPI) for Python provides simple access for users who require programmatic access to Refinitiv data on the desktop. These APIs are intended for Refinitiv Workspace/Eikon Desktop application users. The API lets users access to the following Refinitiv content sets such as Fundamental and reference data, Price time series, News, Symbology conversion and etc. It is designed for ease of use and for rapid application development by leveraging Refinitiv data and entitlements to simplify market data management and reporting.
 
 ## Table of contents
 * [Overview](#overview)
@@ -26,11 +26,19 @@ The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api)
 
 ## <a id="overview"></a>Symbology Conversion Chat Bot Demo overview
 
-This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API to covert the requested symbol and lets the Bot API response to user. 
+This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API coverts the requested symbol and lets the Bot API response to user. 
 
 ![Figure-1](images/chat_bot_symbology_result.png "Chatbot Symbology") 
 
-*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis) for more detail.
+This demo application supports the following instrument codes conversion:
+- RIC 
+- ISIN 
+- SEDOL 
+- CUSIP 
+- lipperID 
+- OAPermID
+
+*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis)  for more detail.
 
 ## <a id="usage-limit"></a>Eikon Data API Usage and Limits Guideline
 
@@ -67,7 +75,7 @@ You can generate your AppKey via the following steps:
 
 You will then see a row for your new app with an AppKey item, which is your client_id for the Refinitiv Data Platform (RDP) and Eikon Data API Authentication. 
 
-*Note*: You can create different App Key (client_id) for 'EDP API' and 'Eikon Data API' by just creating two application for each API type.
+*Note*: You can create a different App Key (client_id) for 'EDP API' and 'Eikon Data API' by just creating two applications for each API type.
 
 ## <a id="setting"></a>Setting the Messenger application
 
@@ -98,7 +106,7 @@ This demo project contains the following files and folders
 1. *src/chatbot_demo_symbology.py*: The symbology chat bot demo example application. This code is based on [Messenger Bot API Demo chatbot_demo_ws.py source code](https://github.com/Refinitiv-API-Samples/Example.MessengerChatBot.Python).
 2. *src/dapi_session.py*: A Python module that manages Eikon Data API session and operation for chatbot_demo_symbology.py application. 
 3. *src/rdp_token.py*: A Python module that manages RDP Authentication process for chatbot_demo_symbology.py application. This module is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal.
-6. *requirements.txt*: The project dependencies configurationf file .
+6. *requirements.txt*: The project dependencies configuration file .
 5. LICENSE.md: Project's license file.
 9. README.md: Project's README file.
 
@@ -108,7 +116,7 @@ Please refer to [Development Detail document page](./Development_Detail.md).
 
 ## <a id="running-demo"></a>Running the demo application
 
-Please note that the Refintiv Workspace/Eikon application integrates a Data API proxy that acts as an interface between the Eikon Data API Python library and the Eikon Data Platform. For this reason, the Refinitiv Workspace/Eikon application must be running when you use the Eikon Data API Python library.
+Please note that the Refinitiv Workspace/Eikon application integrates a Data API proxy that acts as an interface between the Eikon Data API Python library and the Eikon Data Platform. For this reason, the Refinitiv Workspace/Eikon application must be running when you use the Eikon Data API Python library.
 
 The first step is unzip or download the example project folder into a directory of your choice, then choose how to run application based on your environment below.
 
@@ -123,21 +131,21 @@ The first step is unzip or download the example project folder into a directory 
     ```
     $>python chatbot_demo_symbology
     ```
-5. The demo connecst to Refinitiv Workspace/Eikon desktop applciation and show the following message if it can initial session with the desktop application.
+5. The demo connects to Refinitiv Workspace/Eikon desktop application and show the following message if it can initial session with the desktop application.
     ```
     Initiate Eikon Data API success
     ```
-6. Then demo application continues authentication process, get an assoicate chatroom, then join that chatroom. The bot will send a greeting message with the symbology command instruction.
+6. Then demo application continues authentication process, get an associate chatroom, then join that chatroom. The bot will send a greeting message with the symbology command instruction.
     
-    ![Figure-1](images/chat_bot_greeting.png "Chatboot greeting and help message") 
-7. You can ask the chatbot to convert instrument code type for you with ```Please convert <symbol> to <target_symbol_type>``` command. The supported ```<target_symbol_type>``` are CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID
+    ![Figure-1](images/chat_bot_greeting.png "Chatbot greeting and help message") 
+7. You can ask the chatbot to convert instrument code type for you with ```Please convert <symbol> to <target_symbol_type>``` command. The supported ```<target_symbol_type>``` are CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID
     
     ![Figure-2](images/chat_bot_interaction.png "Basic interaction") 
 8. If you forget the command, you can send ```/help``` message in to a Chatroom to see an example.
 
 ## <a id="next-step"></a>Next Step
 
-The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to intergate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
+The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to integrate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
 
 For more advance chat bot interaction, please see [How to build Refinitiv Messenger Interactive ChatBot with Python Machine Learning and Messenger Bot API](https://developers.refinitiv.com/article/build-refinitiv-messenger-interactive-chat-bot-python-machine-learning-and-messenger-bot-api) article which show how to integrate Chat Bot with Machine Learning. 
 

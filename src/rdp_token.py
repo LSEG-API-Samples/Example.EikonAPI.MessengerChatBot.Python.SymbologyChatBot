@@ -93,7 +93,7 @@ class RDPTokenManagement:
             logging.error('RDP authentication exception failure: %s' % (e))
 
         if response.status_code == 200:  # HTTP Status 'OK'
-            print('Authenticaion success')
+            print('Authentication success')
             # Print RDP authentication response message for debugging purpose
             logging.debug('Receive: %s' % (json.dumps(response.json(), sort_keys=True, indent=2, separators=(',', ':'))))
         else:  # Handle HTTP error

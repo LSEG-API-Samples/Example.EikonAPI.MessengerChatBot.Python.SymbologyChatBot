@@ -25,7 +25,7 @@ from string import Template
 import re
 
 from rdp_token import RDPTokenManagement # Module for managing RDP session
-from dapi_session import DAPISessionManagement # Module for manaing Eikon Data API session
+from dapi_session import DAPISessionManagement # Module for managing Eikon Data API session
 
 # Input your Bot Username
 bot_username = '---YOUR BOT USERNAME---'
@@ -60,16 +60,16 @@ bot_api_base_path = '/messenger/beta1'
 
 dapi = None
 
-# Covertion request message Regular Expression pattern
+# Conversion request message Regular Expression pattern
 symbology_request_pattern = r'Please convert (?P<symbol>.*) to (?P<target_symbol_type>.*)'
 
 # Response messages templates
 response_template = Template('@$sender, the $target_symbol_type instrument code of  $symbol is $converted_symbol')
 response_error_template = Template('@$sender, the $target_symbol_type instrument code of $symbol is not available')
 response_unsupported_type_template = Template('@$sender, unsupported <target symbol type> $target_symbol_type\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n')
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n')
 
-response_unsupported_command = Template('@$sender, unsupport command. Please use the following command to convert instrument code\n'
+response_unsupported_command = Template('@$sender, unsupported command. Please use the following command to convert instrument code\n'
     '"Please convert <symbol> to <target symbol type>"\n'
     '\n'
     'Example:\n'
@@ -78,13 +78,12 @@ response_unsupported_command = Template('@$sender, unsupport command. Please use
                             
 # Dictionary to map between input <target symbol type> and Refinitiv Workspace instrument type fields
 symbol_dict = {'RIC':'TR.RIC','ISIN':'TR.ISIN','SEDOL':'TR.SEDOL',
-    'CUSIP':'TR.CUSIP','ticker':'TR.TickerSymbol','lipperID':'TR.LipperRICCode',
-    'IMO':'TR.AssetIMO','OAPermID':'TR.OrganizationID'}
+    'CUSIP':'TR.CUSIP','lipperID':'TR.LipperRICCode','OAPermID':'TR.OrganizationID'}
 
 # Help/Instruction Message
 help_message = ('You can ask me to convert instrument code with this command\n'
     '"Please convert <symbol> to <target symbol type>"\n'
-    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, ticker, lipperID, IMO and OAPermID\n'
+    'The supported <target symbol type> are: CUSIP, ISIN, SEDOL, RIC, lipperID and OAPermID\n'
     '\n'
     'Example:\n'
     'Please convert IBM.N to ISIN')
@@ -333,7 +332,7 @@ def process_message(message_json):  # Process incoming message from a joined Cha
                     else: # If user input other messages
                         response_message = response_unsupported_command.substitute(sender = sender)
                     
-                    # Send a message (convert result, or unsupport symbol type) to the chatroom.
+                    # Send a message (convert result, or unsupported symbol type) to the chatroom.
                     post_message_to_chatroom( access_token, joined_rooms, chatroom_id, response_message)
 
                 except AttributeError as attrib_error:
@@ -341,7 +340,7 @@ def process_message(message_json):  # Process incoming message from a joined Cha
 
 
         except Exception as error:
-            logging.error('Post meesage to a Chatroom fail : %s' % error)
+            logging.error('Post message to a Chatroom fail : %s' % error)
 
 
 # =============================== Main Process ========================================
