@@ -7,3 +7,5 @@ src/str_test.py
 src/chatbot_demo_ws.py
 src/__pycache__
 README_old.md
+requirements_old.txt
+src/.env

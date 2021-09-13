@@ -2,7 +2,7 @@
 # |            This source code is provided under the Apache 2.0 license      --
 # |  and is provided AS IS with no warranty or guarantee of fit for purpose.  --
 # |                See the project's LICENSE.md for details.                  --
-# |           Copyright Refinitiv 2020. All rights reserved.                  --
+# |           Copyright Refinitiv 2020-2021. All rights reserved.             --
 # |-----------------------------------------------------------------------------
 
 # |-----------------------------------------------------------------------------
@@ -10,6 +10,7 @@
 # |-----------------------------------------------------------------------------
 
 # Import the required libraries for Eikon and JSON operations
+import os
 import sys
 import time
 import getopt
@@ -20,6 +21,7 @@ import websocket
 import threading
 import random
 import logging
+from dotenv import load_dotenv
 
 from string import Template
 import re
@@ -27,14 +29,17 @@ import re
 from rdp_token import RDPTokenManagement # Module for managing RDP session
 from dapi_session import DAPISessionManagement # Module for managing Eikon Data API session
 
+# take environment variables from .env.
+load_dotenv()
+
 # Input your Bot Username
-bot_username = '---YOUR BOT USERNAME---'
+bot_username = os.getenv('BOT_USERNAME')
 # Input Bot Password
-bot_password = '---YOUR BOT PASSWORD---'
+bot_password = os.getenv('BOT_PASSWORD')
 # Input your Messenger account AppKey.
-app_key = '---YOUR MESSENGER ACCOUNT APPKEY---'
+app_key = os.getenv('MESSENGER_APPKEY')
 # Input your Refinitiv Workspace/Eikon Desktop Eikon Data API App Key
-data_api_appkey = '---YOUR DATA API APPKEY---'
+data_api_appkey = os.getenv('EIKON_APPKEY')
 
 # Setting Log level the supported value is 'logging.INFO' and 'logging.DEBUG'
 log_level = logging.DEBUG
@@ -51,9 +56,9 @@ chatroom_id = None
 joined_rooms = None
 
 # Please verify below URL is correct via the WS lookup
-ws_url = 'wss://api.collab.refinitiv.com/services/nt/api/messenger/v1/stream'
-gw_url = 'https://api.refinitiv.com'
-bot_api_base_path = '/messenger/beta1'
+ws_url = os.getenv('MESSENGER_BOT_WS_ENDPOINT')
+gw_url = os.getenv('RDP_GATEWAY_URL')
+bot_api_base_path = os.getenv('MESSENGER_BOT_REST_ENDPOINT')
 
 
 # =============================== Data API and Symbology Variables ========================================

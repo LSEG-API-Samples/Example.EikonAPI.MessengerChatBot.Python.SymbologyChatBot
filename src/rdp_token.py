@@ -2,7 +2,7 @@
 # |            This source code is provided under the Apache 2.0 license      --
 # |  and is provided AS IS with no warranty or guarantee of fit for purpose.  --
 # |                See the project's LICENSE.md for details.                  --
-# |           Copyright Refinitiv 2020. All rights reserved.                  --
+# |           Copyright Refinitiv 2020-2021. All rights reserved.             --
 # |-----------------------------------------------------------------------------
 
 # |-----------------------------------------------------------------------------
@@ -15,11 +15,18 @@ import json
 import time
 import logging
 
+import os
+from dotenv import load_dotenv
+
 # Authentication objects
 auth_obj = None
 
 
 class RDPTokenManagement:
+
+    # take environment variables from .env.
+    load_dotenv()
+
     # Authentication Variables
     username = ''
     password = ''
@@ -33,9 +40,9 @@ class RDPTokenManagement:
     refresh_token = ''
 
     # RDP Authentication Service Detail
-    rdp_authen_version = '/v1'
-    base_URL = 'https://api.refinitiv.com'
-    category_URL = '/auth/oauth2'
+    rdp_authen_version = os.getenv('RDP_AUTH_VERSION')
+    base_URL = os.getenv('RDP_GATEWAY_URL')
+    category_URL = os.getenv('RDP_AUTH_ENDPOINT')
     # endpoint_URL = '/token'
     token_file = './rest-token.txt'
     scope = 'trapi.messenger'
@@ -197,9 +204,9 @@ if __name__ == '__main__':
     print('Getting RDP Authentication Token')
 
     # Authentication Variables
-    _username = '---YOUR BOT USERNAME---'
-    _password = '---YOUR BOT PASSWORD---'
-    _app_key = '---YOUR MESSENGER ACCOUNT APPKEY---'
+    _username = os.getenv('BOT_USERNAME') #---YOUR BOT USERNAME---
+    _password = os.getenv('BOT_PASSWORD') #---YOUR BOT PASSWORD---
+    _app_key = os.getenv('MESSENGER_APPKEY') #---YOUR MESSENGER ACCOUNT APPKEY---
 
 
     """

@@ -1,6 +1,6 @@
 # Build the Symbology Conversion Chat Bot with Refinitiv Messenger Bot and Eikon Data APIs
-- version: 1.0.0
-- Last update: June 2020
+- version: 1.0.5
+- Last update: September 2021
 - Environment: Windows
 - Compiler: Python
 - Prerequisite: [Access to Messenger application and DAPI](#prerequisite)
@@ -59,7 +59,7 @@ This demo project requires the following dependencies.
 Please contact your Refinitiv's representative to help you to access Messenger application, Bot API and Refinitiv Workspace with Eikon Data API access. The Refinitiv team will then provision and set up the bot. Once this is done the email user you provided will receive an automated email with how to set up a password for the bot.
 
 *Note:* 
-- The Python demo applications has been qualified with Python version 3.7.7.
+- The Python demo applications has been qualified with Python version 3.8.11 and Eikon Data API version **1.1.12**.
 - Please refer to the [pip installation guide page](https://pip.pypa.io/en/stable/installing/) if your environment does not have the [pip tool](https://pypi.org/project/pip/) installed. 
 
 ## <a id="appkey"></a>Getting the AppKey value
@@ -106,9 +106,10 @@ This demo project contains the following files and folders
 1. *src/chatbot_demo_symbology.py*: The symbology chat bot demo example application. This code is based on [Messenger Bot API Demo chatbot_demo_ws.py source code](https://github.com/Refinitiv-API-Samples/Example.MessengerChatBot.Python).
 2. *src/dapi_session.py*: A Python module that manages Eikon Data API session and operation for chatbot_demo_symbology.py application. 
 3. *src/rdp_token.py*: A Python module that manages RDP Authentication process for chatbot_demo_symbology.py application. This module is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal.
-6. *requirements.txt*: The project dependencies configuration file .
-5. LICENSE.md: Project's license file.
-9. README.md: Project's README file.
+4. *src/.env.example*: an example ```.env.example``` file.
+5. *requirements.txt*: The project dependencies configuration file .
+6. LICENSE.md: Project's license file.
+7. README.md: Project's README file.
 
 ## <a id="development-details"></a>Development Detail
 
@@ -122,14 +123,24 @@ The first step is unzip or download the example project folder into a directory 
 
 1. Open a command prompt or console.
 2. Run ```$>pip install -r requirements.txt``` command in a console to install all the dependencies libraries.
-3. Open the *chatbot_demo_symbology.py* demo application source code in the *src* folder with your editor and input the following parameters.
-    - ```app_key```: Your AppKey
-    - ```bot_username```: Your Bot username
-    - ```bot_password```: Your Bot password
-    - ```data_api_appkey``` : Your Eikon Data AppKey 
+3. Open a command prompt and go to folder *src*, and create a file name ```.env``` with the following content.
+    ```
+    #Credentials
+    BOT_USERNAME=Your Bot username
+    BOT_PASSWORD=Your AppKey 
+    MESSENGER_APPKEY=Your Bot password
+    EIKON_APPKEY=Your Eikon Data AppKey 
+
+    #Endpoint
+    MESSENGER_BOT_WS_ENDPOINT=wss://api.collab.refinitiv.com/services/nt/api/messenger/v1/stream
+    RDP_GATEWAY_URL=https://api.refinitiv.com
+    MESSENGER_BOT_REST_ENDPOINT=/messenger/beta1
+    RDP_AUTH_VERSION=/v1
+    RDP_AUTH_ENDPOINT=/auth/oauth2
+    ```
 4. Open a command prompt and go to folder *src*, then run the demo application with the following command.
     ```
-    $>python chatbot_demo_symbology
+    $>python chatbot_demo_symbology.py
     ```
 5. The demo connects to Refinitiv Workspace/Eikon desktop application and show the following message if it can initial session with the desktop application.
     ```
