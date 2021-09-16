@@ -64,7 +64,7 @@ Please contact your Refinitiv's representative to help you to access Messenger a
 
 ## <a id="appkey"></a>Getting the AppKey value
 
-Once you have setup your Messenger user, please access the AppKey Generator Tool via Eikon Desktop/Refinitiv Workspace application (go to the Search Bar and type ```APP KEY```, then select the AppKey Generator) or via a [App key Generator web site](https://amers1.apps.cp.thomsonreuters.com/apps/AppkeyGenerator) (Please access with your Refinitiv Workspace/Eikon account, *not your bot account*). 
+Once you have setup your Messenger user, please access the AppKey Generator Tool via Eikon Desktop/Refinitiv Workspace application (go to the Search Bar and type ```APP KEY```, then select the AppKey Generator). Please access with your Refinitiv Workspace/Eikon account, *not your bot account*. 
 
 ![Figure-1](images/app_key_generator.png "AppKey Generator Tool") 
 
