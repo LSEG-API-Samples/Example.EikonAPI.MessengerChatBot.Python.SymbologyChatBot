@@ -7,9 +7,9 @@
 
 ## Messenger Bot API and Eikon Data API Introduction
 
-Refinitiv [Messenger application](https://www.refinitiv.com/en/products/eikon-trading-software/eikon-messenger-securemessaging) is a free to use, compliant and secure messaging platform.  It is a powerful communication tool that provides desktop, mobile, and web access, and allows sharing messages, data, files, screenshots, and emoticons with your contacts. The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of available API calls to build automated workflows or bots for the Messenger application. The Bot API allows your applications to connect with and pass information into Eikon’s Messenger service programmatically or interact with a bot via a WebSocket connection.
+Refinitiv's [Messenger application](https://www.refinitiv.com/en/products/refinitiv-messenger/) is a free to use, compliant and secure messaging platform.  It is a powerful communication tool that provides desktop, mobile, and web access, and allows sharing messages, data, files, screenshots, and emoticons with your contacts. The [Messenger Bot API](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api) provides a set of available API calls to build automated workflows or bots for the Messenger application. The Bot API allows your applications to connect with and pass information into Eikon’s Messenger service programmatically or interact with a bot via a WebSocket connection.
 
-The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) (or DAPI) for Python provides simple access for users who require programmatic access to Refinitiv data on the desktop. These APIs are intended for Refinitiv Workspace/Eikon Desktop application users. The API lets users access to the following Refinitiv content sets such as Fundamental and reference data, Price time series, News, Symbology conversion and etc. It is designed for ease of use and for rapid application development by leveraging Refinitiv data and entitlements to simplify market data management and reporting.
+The [Eikon Data API](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api) (or DAPI) for Python provides simple access for users who require programmatic access to Refinitiv data on the desktop. These APIs are intended for Refinitiv Workspace/Eikon Desktop application users. The API lets users access to the following Refinitiv content sets such as Fundamental and reference data, Price time series, News, Symbology conversion and etc. It is designed for ease of use and for rapid application development by leveraging Refinitiv data and entitlements to simplify market data management and reporting.
 
 ## Table of contents
 * [Overview](#overview)
@@ -26,7 +26,7 @@ The [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api)
 
 ## <a id="overview"></a>Symbology Conversion Chat Bot Demo overview
 
-This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/messenger-api) with [Eikon Data API](https://developers.refinitiv.com/eikon-apis/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API coverts the requested symbol and lets the Bot API response to user. 
+This demo application shows how to integrates [Messenger Bot API](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api) with [Eikon Data API](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api) to be a basic [Python](https://www.python.org/) chat bot application. The symbology chat bot receives a symbology conversion  request from users in the chatroom, then uses Eikon Data API coverts the requested symbol and lets the Bot API response to user. 
 
 ![Figure-1](images/chat_bot_symbology_result.png "Chatbot Symbology") 
 
@@ -44,7 +44,7 @@ This demo application supports the following instrument codes conversion:
 
 The Eikon Data API provides access to certain Refinitiv Workspace/Eikon data. Your access and use of Refinitiv Workspace/Eikon, including the Eikon Data API and any data included therein, is subject to the terms and conditions of your organization’s agreement with us. Refinitiv Workspace/Eikon is an information service that is licensed for individual use and requires a log in session. A log in session controls entitlements and reasonable use for a single user. In line with single user workflow demands, the Eikon Data API imposes limits to ensure that our overall platform can sustain the usage rates of all individual Eikon users accessing data via APIs. 
 
-Please refer to [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/docs?content=49692&type=documentation_item) for the full detail of API usage limit and how to handle it. The examples of usage limits are shown below:
+Please refer to [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api/docs?content=49692&type=documentation_item) for the full detail of API usage limit and how to handle it. The examples of usage limits are shown below:
 - **Requests per second**: The number of requests sent to the platform via the Eikon Data APIs cannot exceed this limit. This number of requests is counted across all client applications connected to the same Eikon instance. For example if 4 applications connected to the same Eikon send 1 request per second, the throttling mechanism will consider an aggregated rate of 4 requests per seconds.*The current limit value (10-Oct-2019) is 5 requests per second*.
 - **Response volume per minute** - The volume (size) of data retrieved from the platform via the Eikon Data APIs cannot exceed this limit. This volume of data is counted across all client applications connected to the same Eikon instance. *The current limit value (10-Oct-2019) is 50 MB per minute*.
 - **Requests per day** - The number of requests sent to the platform per day via the Eikon Data APIs cannot exceed this limit. This number of requests is counted across all client applications connected to the same Eikon instance.*The current limit value (10-Oct-2019) is 10,000 requests per day*.
@@ -156,7 +156,7 @@ The first step is unzip or download the example project folder into a directory 
 
 ## <a id="next-step"></a>Next Step
 
-The [Messenger Bot API](https://developers.refinitiv.com/messenger-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to integrate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
+The [Messenger Bot API](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api) provides a set of APIs calls to build automated workflows or bots for the Messenger application. The API can integrates with other Refinitiv APIs such as Eikon Data API to extend Interactive Chat Bot capability for users in Refinitiv Workspace/Eikon Desktop application. There are many open opportunities to integrate with the chat bot to maximize the chat bot usages and provides assistant for both the business and the consumer.
 
 For more advance chat bot interaction, please see [How to build Refinitiv Messenger Interactive ChatBot with Python Machine Learning and Messenger Bot API](https://developers.refinitiv.com/article/build-refinitiv-messenger-interactive-chat-bot-python-machine-learning-and-messenger-bot-api) article which show how to integrate Chat Bot with Machine Learning. 
 
@@ -165,18 +165,18 @@ For more advance chat bot interaction, please see [How to build Refinitiv Messen
 
 ## <a id="references"></a>References
 For further details, please check out the following resources:
-* [Refinitiv Messenger Bot API page](https://developers.refinitiv.com/messenger-api) on the [Refinitiv Developer Community](https://developers.refinitiv.com/) web site.
-* [Refinitiv Messenger Bot API: Quick Start](https://developers.refinitiv.com/messenger-api/messenger-bot-api/quick-start). 
-* [Refinitiv Messenger Bot API: Documentation page](https://developers.refinitiv.com/messenger-api/messenger-bot-api/docs).
+* [Refinitiv Messenger Bot API page](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api) on the [Refinitiv Developer Community](https://developers.refinitiv.com/) web site.
+* [Refinitiv Messenger Bot API: Quick Start](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api/messenger-bot-api/quick-start). 
+* [Refinitiv Messenger Bot API: Documentation page](https://developers.refinitiv.com/en/api-catalog/messenger-api/messenger-bot-api/messenger-bot-api/docs).
 * [Refinitiv Messenger Bot API Demo application - JavaScript](https://github.com/Refinitiv-API-Samples/Tutorial.MessengerChatBot.JavaScript).
 * [Refinitiv Messenger Bot API Demo application - Python](https://github.com/Refinitiv-API-Samples/Example.MessengerChatBot.Python).
-* [Refinitiv Eikon Data API page](https://developers.refinitiv.com/eikon-apis/eikon-data-api) on the [Refinitiv Developer Community](https://developers.refinitiv.com/) web site.
-* [Eikon Data API Quick Start Guide page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/quick-start).
-* [Eikon Data API Tutorial page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/learning).
+* [Refinitiv Eikon Data API page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api) on the [Refinitiv Developer Community](https://developers.refinitiv.com/) web site.
+* [Eikon Data API Quick Start Guide page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api/quick-start).
+* [Eikon Data API Tutorial page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api/learning).
 * [Python Quants Video Tutorial Series for Eikon API](https://community.developers.refinitiv.com/questions/37865/announcement-new-python-quants-video-tutorial-seri.html).
 * [Eikon Data API Python Reference Guide](https://docs-developers.refinitiv.com/1584688434238/14684/book/en/index.html).
 * [Eikon Data API Troubleshooting article](https://developers.refinitiv.com/article/eikon-data-apipython-troubleshooting-refinitiv).
-* [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/eikon-apis/eikon-data-api/docs?content=49692&type=documentation_item).
+* [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api/docs?content=49692&type=documentation_item).
 * [Refinitiv Data Platform APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis).
 
 For any question related to the Messenger Bot API, please use the Developers Community Q&A Forum for [Messenger Bot API](https://community.developers.refinitiv.com/spaces/303/index.html) and [Eikon Data API](https://community.developers.refinitiv.com/spaces/92/eikon-scripting-apis.html).
