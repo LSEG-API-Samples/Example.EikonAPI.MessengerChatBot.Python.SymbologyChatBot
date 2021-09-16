@@ -38,7 +38,7 @@ This demo application supports the following instrument codes conversion:
 - lipperID 
 - OAPermID
 
-*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis)  for more detail.
+*Note*: The Messenger Bot API uses Refinitiv Data Platform APIs (RDP APIs) for authentication process. The APIs provide simple web based API access to a broad range of content for developers. Please refer to [RDP APIs page](https://developers.refinitiv.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis)  for more detail.
 
 ## <a id="usage-limit"></a>Eikon Data API Usage and Limits Guideline
 
@@ -105,7 +105,7 @@ Once you have setup your Messenger user and Bot user, you can add the Bot and cr
 This demo project contains the following files and folders
 1. *src/chatbot_demo_symbology.py*: The symbology chat bot demo example application. This code is based on [Messenger Bot API Demo chatbot_demo_ws.py source code](https://github.com/Refinitiv-API-Samples/Example.MessengerChatBot.Python).
 2. *src/dapi_session.py*: A Python module that manages Eikon Data API session and operation for chatbot_demo_symbology.py application. 
-3. *src/rdp_token.py*: A Python module that manages RDP Authentication process for chatbot_demo_symbology.py application. This module is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal.
+3. *src/rdp_token.py*: A Python module that manages RDP Authentication process for chatbot_demo_symbology.py application. This module is based on [RDP Python Quickstart Python source code](https://developers.refinitiv.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis/downloads) implemented by Gurpreet Bal.
 4. *src/.env.example*: an example ```.env.example``` file.
 5. *requirements.txt*: The project dependencies configuration file .
 6. LICENSE.md: Project's license file.
@@ -177,6 +177,6 @@ For further details, please check out the following resources:
 * [Eikon Data API Python Reference Guide](https://docs-developers.refinitiv.com/1584688434238/14684/book/en/index.html).
 * [Eikon Data API Troubleshooting article](https://developers.refinitiv.com/article/eikon-data-apipython-troubleshooting-refinitiv).
 * [Eikon Data API Usage and Limits Guideline page](https://developers.refinitiv.com/en/api-catalog/eikon/eikon-data-api/docs?content=49692&type=documentation_item).
-* [Refinitiv Data Platform APIs page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis).
+* [Refinitiv Data Platform APIs page](https://developers.refinitiv.com/en/api-catalog/refinitiv-data-platform/refinitiv-data-platform-apis).
 
 For any question related to the Messenger Bot API, please use the Developers Community Q&A Forum for [Messenger Bot API](https://community.developers.refinitiv.com/spaces/303/index.html) and [Eikon Data API](https://community.developers.refinitiv.com/spaces/92/eikon-scripting-apis.html).
