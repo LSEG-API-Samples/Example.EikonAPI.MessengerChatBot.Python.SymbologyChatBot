@@ -46,11 +46,7 @@ class DAPISessionManagement:
     
     # verify if Eikon Data API is connect to Refinitiv Workspace/Eikon Desktop application
     def verify_desktop_connection(self):
-        ek_port_number = ek.get_port_number()
-        if int(ek_port_number) == 9000:
-            return True
-        else:
-            return False
+        return ek.get_port_number()
 
 # =============================== Main Process, For verifying your Eikon Data API Access purpose ============================
 if __name__ == '__main__':
