@@ -9,3 +9,4 @@ src/__pycache__
 README_old.md
 requirements_old.txt
 src/.env
+.vs/
