@@ -1,6 +1,6 @@
 # Build the Symbology Conversion Chat Bot with Refinitiv Messenger Bot and Eikon Data APIs
 - version: 1.0.6
-- Last update: Mar 2022
+- Last update: Jun 2022
 - Environment: Windows
 - Compiler: Python
 - Prerequisite: [Access to Messenger application and DAPI](#prerequisite)
